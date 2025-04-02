@@ -1,15 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 int valorHospedes = 96;
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -25,10 +20,16 @@ class _MyHomePageState extends State<MyHomePage> {
     tipoRefeicao();
   }
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   void contador() {
-    setState(() {
-      horario = DateFormat.Hms().format(DateTime.now()).toString();
-    });
+      setState(() {
+        horario = DateFormat.Hms().format(DateTime.now()).toString();
+      });
   }
 
   void tipoRefeicao() {
@@ -45,16 +46,12 @@ class _MyHomePageState extends State<MyHomePage> {
       int comparacaoTarde = compareTimes(horarioAtual, horarioTarde);
 
       if (comparacaoCafe < 0) {
-        print('Cafe');
         refeicao = 'Café da Manhã';
       } else if (comparacaoAlmoco < 0) {
-        print('Almoco');
         refeicao = 'Almoço';
       } else if (comparacaoTarde < 0) {
-        print('Tarde');
         refeicao = 'Café da Tarde';
       } else if (comparacaoJanta < 0) {
-        print('Janta');
         refeicao = 'Jantar';
       }
     });
@@ -77,15 +74,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: MediaQuery.of(context).size.height * 0.106,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: Image.asset('assets/images/logosemfundo.png'),
-        ),
-        leadingWidth: 160,
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -353,42 +341,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ],
-            ),
-          ],
-        ),
-      ),
-
-      bottomNavigationBar: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.08,
-        child: BottomNavigationBar(
-          showSelectedLabels: true,
-          iconSize: 28,
-          showUnselectedLabels: false,
-          currentIndex: 0,
-          selectedFontSize: 0,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.bar_chart_rounded,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              label: "",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home_filled,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              label: "",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.edit_document,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              label: "",
             ),
           ],
         ),

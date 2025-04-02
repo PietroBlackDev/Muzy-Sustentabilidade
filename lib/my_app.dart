@@ -1,5 +1,5 @@
-import 'package:tg/pages/my_home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:tg/pages/my_screen_page.dart';
 import 'package:tg/themes/my_theme.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: myTheme,
-      home: const MyHomePage(title: ''),
+      home: HomeScreen(),
     );
   }
 }
