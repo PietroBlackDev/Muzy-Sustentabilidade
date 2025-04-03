@@ -10,7 +10,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _indiceAtual = 0;
-  final List<Widget> _telas = [MyHomePage(), MyFormsPage(), MyStatisticPage()];
+  final List<Widget> _telas = [MyFormsPage(),MyHomePage(), MyStatisticPage()];
 
   @override
   Widget build(BuildContext context) {
