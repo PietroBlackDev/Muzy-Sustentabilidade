@@ -10,7 +10,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _indiceAtual = 0;
-  final List<Widget> _telas = [MyFormsPage(),MyHomePage(), MyStatisticPage()];
+  final List<Widget> _telas = [MyHomePage(), MyFormsPage(), MyStatisticPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.bar_chart_rounded,
+                Icons.home_filled,
                 color: Theme.of(context).colorScheme.surface,
               ),
               label: "",
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.home_filled,
+                Icons.bar_chart_rounded,
                 color: Theme.of(context).colorScheme.surface,
               ),
               label: "",

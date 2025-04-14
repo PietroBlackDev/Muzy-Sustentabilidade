@@ -5,5 +5,6 @@ ThemeData myTheme = ThemeData(
     primary: Color.fromARGB(255, 52, 78, 65),
     surface: Color.fromARGB(255, 218, 215, 205),
     secondary: Color.fromARGB(255, 163, 177, 138),
+    tertiary: Color.fromARGB(255, 88, 129, 87),
   ),
 );

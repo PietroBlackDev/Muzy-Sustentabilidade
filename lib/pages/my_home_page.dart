@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 int valorHospedes = 96;
+int ultimaInsercao = 0;
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -27,9 +28,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void contador() {
-      setState(() {
-        horario = DateFormat.Hms().format(DateTime.now()).toString();
-      });
+    setState(() {
+      horario = DateFormat.Hms().format(DateTime.now()).toString();
+    });
   }
 
   void tipoRefeicao() {
@@ -203,6 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           onPressed: () {
                             valorHospedes = valorHospedes - 1;
+                            ultimaInsercao = 1;
                             setState(() {});
                           },
                           child: Text(
@@ -231,6 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           onPressed: () {
                             valorHospedes = valorHospedes - 2;
+                            ultimaInsercao = 2;
                             setState(() {});
                           },
                           child: Text(
@@ -259,6 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           onPressed: () {
                             valorHospedes = valorHospedes - 3;
+                            ultimaInsercao = 3;
                             setState(() {});
                           },
                           child: Text(
@@ -296,6 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         onPressed: () {
                           valorHospedes = valorHospedes - 4;
+                          ultimaInsercao = 4;
                           setState(() {});
                         },
                         child: Text(
@@ -326,6 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         onPressed: () {
                           valorHospedes = valorHospedes - 5;
+                          ultimaInsercao = 5;
                           setState(() {});
                         },
                         child: Text(
@@ -335,6 +341,33 @@ class _MyHomePageState extends State<MyHomePage> {
                             fontSize: 30,
                             fontWeight: FontWeight.w500,
                           ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.037),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.275,
+                      height: MediaQuery.of(context).size.height * 0.13,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.tertiary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        onPressed: () {
+                          valorHospedes = valorHospedes + ultimaInsercao;
+                          setState(() {});
+                        },
+                        child: Icon(
+                          Icons.keyboard_backspace_outlined,
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          size: 30,
                         ),
                       ),
                     ),
