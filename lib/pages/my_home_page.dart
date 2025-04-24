@@ -11,6 +11,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isButtonDisabled = true;
   String horario = DateTime.now().toString();
   String refeicao = '';
 
@@ -203,6 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           onPressed: () {
+                            _isButtonDisabled = false;
                             valorHospedes = valorHospedes - 1;
                             ultimaInsercao = 1;
                             setState(() {});
@@ -232,6 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           onPressed: () {
+                            _isButtonDisabled = false;
                             valorHospedes = valorHospedes - 2;
                             ultimaInsercao = 2;
                             setState(() {});
@@ -261,6 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           onPressed: () {
+                            _isButtonDisabled = false;
                             valorHospedes = valorHospedes - 3;
                             ultimaInsercao = 3;
                             setState(() {});
@@ -299,6 +303,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         onPressed: () {
+                          _isButtonDisabled = false;
                           valorHospedes = valorHospedes - 4;
                           ultimaInsercao = 4;
                           setState(() {});
@@ -330,6 +335,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         onPressed: () {
+                          _isButtonDisabled = false;
                           valorHospedes = valorHospedes - 5;
                           ultimaInsercao = 5;
                           setState(() {});
@@ -360,10 +366,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        onPressed: () {
-                          valorHospedes = valorHospedes + ultimaInsercao;
-                          setState(() {});
-                        },
+                        onPressed:
+                            _isButtonDisabled
+                                ? null
+                                : () {
+                                  _isButtonDisabled = true;
+                                  valorHospedes =
+                                      valorHospedes + ultimaInsercao;
+                                  setState(() {});
+                                },
                         child: Icon(
                           Icons.keyboard_backspace_outlined,
                           color: const Color.fromARGB(255, 0, 0, 0),

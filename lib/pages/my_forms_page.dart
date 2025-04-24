@@ -41,7 +41,7 @@ class _MyFormsPageState extends State<MyFormsPage> {
                 SizedBox(height: 23),
                 Text('Refeições', style: TextStyle(fontSize: 24)),
                 Text(
-                  'Quantidade de comida desperdiçada por refeições',
+                  'Quantidade de comida desperdiçada por refeições em kg',
                   style: TextStyle(fontSize: 15),
                 ),
                 SizedBox(height: 15),
