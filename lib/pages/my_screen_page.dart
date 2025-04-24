@@ -46,14 +46,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.bar_chart_rounded,
+                Icons.edit_document,
                 color: Theme.of(context).colorScheme.surface,
               ),
               label: "",
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.edit_document,
+                Icons.bar_chart_rounded,
                 color: Theme.of(context).colorScheme.surface,
               ),
               label: "",
