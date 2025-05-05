@@ -1,9 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
 
-int valorHospedes = 96;
+import 'package:tg/model/quantidade_model.dart';
+
 int ultimaInsercao = 0;
+int valorHospedes = 0;
+int? quantidade;
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -20,6 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     contador();
     tipoRefeicao();
+    consultaQuantidadeApi();
   }
 
   @override
@@ -65,6 +71,36 @@ class _MyHomePageState extends State<MyHomePage> {
     return minutosAtual.compareTo(minutos1);
   }
 
+  Future consultaQuantidadeApi() async {
+    try {
+      Dio dio = Dio();
+      Response response = await dio.get(
+        'http://10.125.121.135:8081/CI4/public/hospedes',
+      );
+
+      if (response.statusCode == 200) {
+        var json = jsonEncode(response.data);
+        var _data = json.toString();
+
+        // Converter o JSON para um Map
+        Map<String, dynamic> jsonMap = jsonDecode(_data);
+
+        // Criar uma instância de QuantidadeModel usando o método fromJson
+        QuantidadeModel quantidadeModel = QuantidadeModel.fromJson(jsonMap);
+
+        // Atualizar o estado do widget com o valor obtido
+        setState(() {
+          quantidade = quantidadeModel.quantidade;
+        });
+
+        // Exibir o valor
+        print(quantidade);
+      }
+    } catch (e) {
+      print("Erro ao consultar a API: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Timer(Duration(seconds: 1), () {
@@ -74,7 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Timer(Duration(seconds: 1), () {
       tipoRefeicao();
     });
-
     return Scaffold(
       body: Center(
         child: Column(
@@ -143,14 +178,21 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        '$valorHospedes',
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 115,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      quantidade != null
+                          ? Text(
+                            '$quantidade',
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 115,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                          : SizedBox(
+                            height: 100,
+                            width: 100,
+                            child: CircularProgressIndicator(strokeWidth: 10),
+                          ),
+                      SizedBox(height: 10),
 
                       Column(
                         children: [
@@ -205,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           onPressed: () {
                             _isButtonDisabled = false;
-                            valorHospedes = valorHospedes - 1;
+                            quantidade = quantidade! - 1;
                             ultimaInsercao = 1;
                             setState(() {});
                           },
@@ -235,7 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           onPressed: () {
                             _isButtonDisabled = false;
-                            valorHospedes = valorHospedes - 2;
+                            quantidade = quantidade! - 2;
                             ultimaInsercao = 2;
                             setState(() {});
                           },
@@ -265,7 +307,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           onPressed: () {
                             _isButtonDisabled = false;
-                            valorHospedes = valorHospedes - 3;
+                            quantidade = quantidade! - 3;
                             ultimaInsercao = 3;
                             setState(() {});
                           },
@@ -304,7 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         onPressed: () {
                           _isButtonDisabled = false;
-                          valorHospedes = valorHospedes - 4;
+                          quantidade = quantidade! - 4;
                           ultimaInsercao = 4;
                           setState(() {});
                         },
@@ -336,7 +378,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         onPressed: () {
                           _isButtonDisabled = false;
-                          valorHospedes = valorHospedes - 5;
+                          quantidade = quantidade! - 5;
                           ultimaInsercao = 5;
                           setState(() {});
                         },
@@ -371,8 +413,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ? null
                                 : () {
                                   _isButtonDisabled = true;
-                                  valorHospedes =
-                                      valorHospedes + ultimaInsercao;
+                                  quantidade = quantidade! + ultimaInsercao;
                                   setState(() {});
                                 },
                         child: Icon(
