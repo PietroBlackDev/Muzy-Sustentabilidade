@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
@@ -98,6 +99,28 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     } catch (e) {
       print("Erro ao consultar a API: $e");
+    }
+  }
+
+  Future<void> sendData(int codigo, int quantidade) async {
+    final Map<String, dynamic> data = {'ValorHospedes': '$quantidade'};
+    final String jsonBody = jsonEncode(data);
+    print(jsonBody);
+
+    try {
+      final response = await http.put(
+        Uri.parse('http://10.125.121.135:8081/CI4/public/subtracao/$codigo'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonBody,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Inserção realizada com sucesso!');
+      } else {
+        print('Erro ao inserir: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erro na requisição: $e');
     }
   }
 
@@ -249,6 +272,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             _isButtonDisabled = false;
                             quantidade = quantidade! - 1;
                             ultimaInsercao = 1;
+                            sendData(1, quantidade!);
                             setState(() {});
                           },
                           child: Text(
