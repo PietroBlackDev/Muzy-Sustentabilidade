@@ -43,8 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void tipoRefeicao() {
     setState(() {
-      TimeOfDay horarioCafe = TimeOfDay(hour: 11, minute: 00);
-      TimeOfDay horarioAlmoco = TimeOfDay(hour: 14, minute: 30);
+      TimeOfDay horarioCafe = TimeOfDay(hour: 10, minute: 00);
+      TimeOfDay horarioAlmoco = TimeOfDay(hour: 15, minute: 00);
       TimeOfDay horarioTarde = TimeOfDay(hour: 18, minute: 0);
       TimeOfDay horarioJanta = TimeOfDay(hour: 22, minute: 0);
       TimeOfDay horarioAtual = TimeOfDay.now();
@@ -303,6 +303,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             _isButtonDisabled = false;
                             quantidade = quantidade! - 2;
                             ultimaInsercao = 2;
+                            sendData(1, quantidade!);
                             setState(() {});
                           },
                           child: Text(
@@ -333,6 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             _isButtonDisabled = false;
                             quantidade = quantidade! - 3;
                             ultimaInsercao = 3;
+                            sendData(1, quantidade!);
                             setState(() {});
                           },
                           child: Text(
@@ -372,6 +374,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           _isButtonDisabled = false;
                           quantidade = quantidade! - 4;
                           ultimaInsercao = 4;
+                          sendData(1, quantidade!);
                           setState(() {});
                         },
                         child: Text(
@@ -404,6 +407,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           _isButtonDisabled = false;
                           quantidade = quantidade! - 5;
                           ultimaInsercao = 5;
+                          sendData(1, quantidade!);
                           setState(() {});
                         },
                         child: Text(

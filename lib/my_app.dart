@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tg/pages/my_screen_page.dart';
+import 'package:tg/pages/my_login_page.dart';
 import 'package:tg/themes/my_theme.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       title: 'Muzy Sustentabilidade',
       debugShowCheckedModeBanner: false,
       theme: myTheme,
-      home: HomeScreen(),
+      home: MyLoginPage(),
     );
   }
 }
