@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tg/componentes/decoracao_campo_aut.dart';
+import 'package:tg/model/credenciais_model.dart';
 import 'package:tg/pages/my_screen_page.dart';
+import 'package:tg/validations/credentials_validator.dart';
 
 class MyLoginPage extends StatefulWidget {
   const MyLoginPage({super.key});
@@ -10,6 +13,16 @@ class MyLoginPage extends StatefulWidget {
 }
 
 class _MyLoginPageState extends State<MyLoginPage> {
+  final validacao = CredenciaisModel();
+  final validacaoForm = CredentialsValidator();
+  final formKey = GlobalKey<FormState>();
+
+  bool isValid() {
+    final result = validacaoForm.validate(validacao);
+
+    return result.isValid;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,52 +101,155 @@ class _MyLoginPageState extends State<MyLoginPage> {
           ),
           child: Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Login',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 45),
-                TextField(
-                  decoration: getAuthenticationInputDecoration('Usuário'),
-                ),
-                SizedBox(height: 20),
-                TextField(
-                  decoration: getAuthenticationInputDecoration('Senha'),
-                ),
-                SizedBox(height: 30),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.90,
-                  height: MediaQuery.of(context).size.height * 0.06,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(0),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Login',
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  SizedBox(height: 45),
+                  TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    onChanged: validacao.setUsuario,
+                    validator: validacaoForm.byField(validacao, 'usuario'),
+                    decoration: getAuthenticationInputDecoration('Usuário'),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    onChanged: validacao.setSenha,
+                    validator: validacaoForm.byField(validacao, 'senha'),
+                    decoration: getAuthenticationInputDecoration('Senha'),
+                  ),
+                  SizedBox(height: 30),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.90,
+                    height: MediaQuery.of(context).size.height * 0.06,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(0),
                     ),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
-                    },
-                    child: Text(
-                      "ENTRAR",
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: ListenableBuilder(
+                      listenable: validacao,
+                      builder: (context, child) {
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.secondary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed:
+                              isValid()
+                                  ? () {
+                                    if (validacao.senha == 'admin' &&
+                                        validacao.usuario == 'admin') {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => HomeScreen(),
+                                        ),
+                                      );
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Center(
+                                              child: Lottie.asset(
+                                                'assets/lotties/erro.json',
+                                              ),
+                                            ),
+                                            content: Text(
+                                              'Usuário ou senha inválidos',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: const Color.fromARGB(
+                                                  255,
+                                                  0,
+                                                  0,
+                                                  0,
+                                                ),
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            actions: [
+                                              Container(
+                                                width:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.width *
+                                                    0.9,
+                                                height:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.height *
+                                                    0.04,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(0),
+                                                ),
+                                                child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Color.fromARGB(
+                                                          218,
+                                                          235,
+                                                          65,
+                                                          65,
+                                                        ),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text(
+                                                    "OK",
+                                                    style: TextStyle(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                            255,
+                                                            248,
+                                                            250,
+                                                            252,
+                                                          ),
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  }
+                                  : null,
+                          child: Text(
+                            "ENTRAR",
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
