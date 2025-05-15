@@ -4,26 +4,19 @@ import 'package:tg/pages/my_home_page.dart';
 import 'package:tg/pages/my_statistic_page.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   int _indiceAtual = 0;
   final List<Widget> _telas = [MyHomePage(), MyFormsPage(), MyStatisticPage()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: MediaQuery.of(context).size.height * 0.106,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: Image.asset('assets/images/logosemfundo.png'),
-        ),
-        leadingWidth: 160,
-      ),
       body: _telas[_indiceAtual],
       bottomNavigationBar: SizedBox(
         height: MediaQuery.of(context).size.height * 0.08,

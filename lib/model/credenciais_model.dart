@@ -16,6 +16,7 @@ class CredenciaisModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  @override
   String toString() {
     return 'CredenciaisModel{usuario: $usuario, senha: $senha}';
   }

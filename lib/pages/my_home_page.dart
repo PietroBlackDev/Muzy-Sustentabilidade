@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
 
+import 'dart:convert';
 import 'package:tg/model/quantidade_model.dart';
 
 int ultimaInsercao = 0;
@@ -12,6 +12,8 @@ int valorHospedes = 0;
 int? quantidade;
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -27,6 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
     contador();
     tipoRefeicao();
     consultaQuantidadeApi();
+    registraTotalHospedes();
   }
 
   @override
@@ -81,10 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (response.statusCode == 200) {
         var json = jsonEncode(response.data);
-        var _data = json.toString();
+        var data = json.toString();
 
         // Converter o JSON para um Map
-        Map<String, dynamic> jsonMap = jsonDecode(_data);
+        Map<String, dynamic> jsonMap = jsonDecode(data);
 
         // Criar uma instância de QuantidadeModel usando o método fromJson
         QuantidadeModel quantidadeModel = QuantidadeModel.fromJson(jsonMap);
@@ -102,14 +105,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> sendData(int codigo, int quantidade) async {
+  Future<void> atualizaValorHospedes(int quantidade) async {
     final Map<String, dynamic> data = {'ValorHospedes': '$quantidade'};
     final String jsonBody = jsonEncode(data);
     print(jsonBody);
 
     try {
       final response = await http.put(
-        Uri.parse('http://10.125.121.135:8081/CI4/public/subtracao/$codigo'),
+        Uri.parse('http://10.125.121.135:8081/CI4/public/subtracao/update'),
         headers: {'Content-Type': 'application/json'},
         body: jsonBody,
       );
@@ -118,6 +121,32 @@ class _MyHomePageState extends State<MyHomePage> {
         print('Inserção realizada com sucesso!');
       } else {
         print('Erro ao inserir: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Erro na requisição: $e');
+    }
+  }
+
+  Future<void> registraTotalHospedes() async {
+    final url = Uri.parse(
+      'http://10.125.121.135:8081/CI4/public/hospedes/registrar',
+    );
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(
+          {},
+        ), // Enviando corpo vazio, pois o servidor calcula internamente
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Inserção realizada com sucesso!');
+        print('Resposta: ${response.body}');
+      } else {
+        print('Erro ao inserir: ${response.statusCode}');
+        print('Resposta: ${response.body}');
       }
     } catch (e) {
       print('Erro na requisição: $e');
@@ -134,6 +163,28 @@ class _MyHomePageState extends State<MyHomePage> {
       tipoRefeicao();
     });
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: MediaQuery.of(context).size.height * 0.106,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Image.asset('assets/images/logosemfundo.png'),
+        ),
+        leadingWidth: 160,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 22, bottom: 7),
+            child: Text(
+              'TOTAL: $quantidade',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.surface,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -269,11 +320,16 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           onPressed: () {
-                            _isButtonDisabled = false;
-                            quantidade = quantidade! - 1;
-                            ultimaInsercao = 1;
-                            sendData(1, quantidade!);
-                            setState(() {});
+                            if (quantidade == null) {
+                              _isButtonDisabled = true;
+                              consultaQuantidadeApi();
+                            } else {
+                              _isButtonDisabled = false;
+                              quantidade = quantidade! - 1;
+                              ultimaInsercao = 1;
+                              atualizaValorHospedes(quantidade!);
+                              setState(() {});
+                            }
                           },
                           child: Text(
                             "-1",
@@ -300,11 +356,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           onPressed: () {
-                            _isButtonDisabled = false;
-                            quantidade = quantidade! - 2;
-                            ultimaInsercao = 2;
-                            sendData(1, quantidade!);
-                            setState(() {});
+                            if (quantidade == null) {
+                              _isButtonDisabled = true;
+                            } else {
+                              _isButtonDisabled = false;
+                              quantidade = quantidade! - 2;
+                              ultimaInsercao = 2;
+                              atualizaValorHospedes(quantidade!);
+                              setState(() {});
+                            }
                           },
                           child: Text(
                             "-2",
@@ -331,11 +391,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           onPressed: () {
-                            _isButtonDisabled = false;
-                            quantidade = quantidade! - 3;
-                            ultimaInsercao = 3;
-                            sendData(1, quantidade!);
-                            setState(() {});
+                            if (quantidade == null) {
+                              _isButtonDisabled = true;
+                            } else {
+                              _isButtonDisabled = false;
+                              quantidade = quantidade! - 3;
+                              ultimaInsercao = 3;
+                              atualizaValorHospedes(quantidade!);
+                              setState(() {});
+                            }
                           },
                           child: Text(
                             "-3",
@@ -371,11 +435,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         onPressed: () {
-                          _isButtonDisabled = false;
-                          quantidade = quantidade! - 4;
-                          ultimaInsercao = 4;
-                          sendData(1, quantidade!);
-                          setState(() {});
+                          if (quantidade == null) {
+                            _isButtonDisabled = true;
+                          } else {
+                            _isButtonDisabled = false;
+                            quantidade = quantidade! - 4;
+                            ultimaInsercao = 4;
+                            atualizaValorHospedes(quantidade!);
+                            setState(() {});
+                          }
                         },
                         child: Text(
                           "-4",
@@ -404,11 +472,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         onPressed: () {
-                          _isButtonDisabled = false;
-                          quantidade = quantidade! - 5;
-                          ultimaInsercao = 5;
-                          sendData(1, quantidade!);
-                          setState(() {});
+                          if (quantidade == null) {
+                            _isButtonDisabled = true;
+                          } else {
+                            _isButtonDisabled = false;
+                            quantidade = quantidade! - 5;
+                            ultimaInsercao = 5;
+                            atualizaValorHospedes(quantidade!);
+                            setState(() {});
+                          }
                         },
                         child: Text(
                           "-5",

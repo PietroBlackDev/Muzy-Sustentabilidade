@@ -16,6 +16,15 @@ class _MyFormsPageState extends State<MyFormsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: MediaQuery.of(context).size.height * 0.106,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Image.asset('assets/images/logosemfundo.png'),
+        ),
+        leadingWidth: 160,
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
