@@ -40,13 +40,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void iniciarTimer() {
     _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
-      print(horario); // ou qualquer outra variável que você esteja usando
       contador();
       tipoRefeicao();
     });
 
     _timer = Timer.periodic(const Duration(seconds: 600), (timer) {
-      print(refeicao); // ou qualquer outra variável que você esteja usando
       tipoRefeicao();
     });
   }
@@ -121,9 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           total = quantidadeModel.quantidade;
         });
-
-        // Exibir o valor
-        print('o total é $total');
       }
     } catch (e) {
       print("Erro ao consultar a API: $e");
@@ -149,9 +144,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // Atualizar o estado do widget com o valor obtido
 
         valorAtual = valorAtualModel.valor;
-
-        // Exibir o valor
-        print('O valor atual é: $valorAtual');
       }
     } catch (e) {
       print("Erro ao consultar a API: $e");
@@ -196,10 +188,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Inserção realizada com sucesso!');
-        print('Resposta: ${response.body}');
       } else {
         print('Erro ao inserir: ${response.statusCode}');
-        print('Resposta: ${response.body}');
       }
     } catch (e) {
       print('Erro na requisição: $e');
@@ -208,10 +198,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Timer(const Duration(seconds: 1), () {
-      tipoRefeicao();
-    });
-
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.106,
