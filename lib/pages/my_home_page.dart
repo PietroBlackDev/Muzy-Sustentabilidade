@@ -11,7 +11,8 @@ int ultimaInsercao = 0;
 int valorHospedes = 0;
 int? quantidade = 0;
 int? total = 0;
-int? valorAtual = 0;
+int? valorAtual;
+Timer? _timer;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -34,6 +35,26 @@ class _MyHomePageState extends State<MyHomePage> {
     consultaQuantidadeApi();
     consultaValorAtual();
     registraTotalHospedes();
+    iniciarTimer();
+  }
+
+  void iniciarTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
+      print(horario); // ou qualquer outra variável que você esteja usando
+      contador();
+      tipoRefeicao();
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 600), (timer) {
+      print(refeicao); // ou qualquer outra variável que você esteja usando
+      tipoRefeicao();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -187,13 +208,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Timer(Duration(seconds: 1), () {
-      contador();
-    });
-
-    Timer(Duration(seconds: 1), () {
+    Timer(const Duration(seconds: 1), () {
       tipoRefeicao();
     });
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.106,
@@ -284,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      valorAtual != 0
+                      valorAtual != null
                           ? Text(
                             '$valorAtual',
                             style: TextStyle(
