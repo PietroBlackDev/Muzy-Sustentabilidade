@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
-
 import 'dart:convert';
 import 'package:tg/model/quantidade_model.dart';
+import 'package:tg/model/valorAtual_model.dart';
 
 int ultimaInsercao = 0;
 int valorHospedes = 0;
-int? quantidade;
+int? quantidade = 0;
+int? total = 0;
+int? valorAtual = 0;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -22,6 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isButtonDisabled = true;
   String horario = DateTime.now().toString();
   String refeicao = '';
+  int? valor = total! - quantidade!;
 
   @override
   void initState() {
@@ -29,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
     contador();
     tipoRefeicao();
     consultaQuantidadeApi();
+    consultaValorAtual();
     registraTotalHospedes();
   }
 
@@ -94,11 +98,39 @@ class _MyHomePageState extends State<MyHomePage> {
 
         // Atualizar o estado do widget com o valor obtido
         setState(() {
-          quantidade = quantidadeModel.quantidade;
+          total = quantidadeModel.quantidade;
         });
 
         // Exibir o valor
-        print(quantidade);
+        print('o total é $total');
+      }
+    } catch (e) {
+      print("Erro ao consultar a API: $e");
+    }
+  }
+
+  Future consultaValorAtual() async {
+    try {
+      Dio dio = Dio();
+      Response response = await dio.get(
+        'http://10.125.121.135:8081/CI4/public/valor',
+      );
+
+      if (response.statusCode == 200) {
+        var json = jsonEncode(response.data);
+        var data = json.toString();
+
+        // Converter o JSON para um Map
+        Map<String, dynamic> jsonMap = jsonDecode(data);
+
+        ValorAtualModel valorAtualModel = ValorAtualModel.fromJson(jsonMap);
+
+        // Atualizar o estado do widget com o valor obtido
+
+        valorAtual = valorAtualModel.valor;
+
+        // Exibir o valor
+        print('O valor atual é: $valorAtual');
       }
     } catch (e) {
       print("Erro ao consultar a API: $e");
@@ -175,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Padding(
             padding: const EdgeInsets.only(right: 22, bottom: 7),
             child: Text(
-              'TOTAL: $quantidade',
+              'TOTAL: $total',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.surface,
                 fontSize: 20,
@@ -252,9 +284,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      quantidade != null
+                      valorAtual != 0
                           ? Text(
-                            '$quantidade',
+                            '$valorAtual',
                             style: TextStyle(
                               color: const Color.fromARGB(255, 0, 0, 0),
                               fontSize: 115,
@@ -322,13 +354,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: () {
                             if (quantidade == null) {
                               _isButtonDisabled = true;
-                              consultaQuantidadeApi();
                             } else {
                               _isButtonDisabled = false;
-                              quantidade = quantidade! - 1;
+                              quantidade = 1;
                               ultimaInsercao = 1;
                               atualizaValorHospedes(quantidade!);
-                              setState(() {});
+                              setState(() {
+                                valorAtual = valorAtual! - 1;
+                              });
                             }
                           },
                           child: Text(
@@ -360,10 +393,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               _isButtonDisabled = true;
                             } else {
                               _isButtonDisabled = false;
-                              quantidade = quantidade! - 2;
+                              quantidade = 2;
                               ultimaInsercao = 2;
                               atualizaValorHospedes(quantidade!);
-                              setState(() {});
+                              setState(() {
+                                valorAtual = valorAtual! - 2;
+                              });
                             }
                           },
                           child: Text(
@@ -395,10 +430,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               _isButtonDisabled = true;
                             } else {
                               _isButtonDisabled = false;
-                              quantidade = quantidade! - 3;
+                              quantidade = 3;
                               ultimaInsercao = 3;
                               atualizaValorHospedes(quantidade!);
-                              setState(() {});
+                              setState(() {
+                                valorAtual = valorAtual! - 3;
+                              });
                             }
                           },
                           child: Text(
@@ -439,10 +476,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             _isButtonDisabled = true;
                           } else {
                             _isButtonDisabled = false;
-                            quantidade = quantidade! - 4;
+                            quantidade = 4;
                             ultimaInsercao = 4;
                             atualizaValorHospedes(quantidade!);
-                            setState(() {});
+                            setState(() {
+                              valorAtual = valorAtual! - 4;
+                            });
                           }
                         },
                         child: Text(
@@ -476,10 +515,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             _isButtonDisabled = true;
                           } else {
                             _isButtonDisabled = false;
-                            quantidade = quantidade! - 5;
+                            quantidade = 5;
                             ultimaInsercao = 5;
                             atualizaValorHospedes(quantidade!);
-                            setState(() {});
+                            setState(() {
+                              valorAtual = valorAtual! - 5;
+                            });
                           }
                         },
                         child: Text(
@@ -513,8 +554,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ? null
                                 : () {
                                   _isButtonDisabled = true;
-                                  quantidade = quantidade! + ultimaInsercao;
-                                  setState(() {});
+                                  quantidade = -ultimaInsercao;
+                                  atualizaValorHospedes(quantidade!);
+                                  setState(() {
+                                    valorAtual = valorAtual! + ultimaInsercao;
+                                  });
                                 },
                         child: Icon(
                           Icons.keyboard_backspace_outlined,
