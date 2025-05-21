@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 import 'package:tg/model/estatisticaMensal_model.dart';
 
 class MyStatisticPage extends StatefulWidget {
@@ -43,38 +44,334 @@ class _MyStatisticPageState extends State<MyStatisticPage> {
         ),
         leadingWidth: 160,
       ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.4,
-        child: FutureBuilder<List<EstatisticaMensal>>(
-          future: fetchEstatisticas(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Erro: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('Nenhuma estatística encontrada.'));
-            } else {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SfCartesianChart(
-                  title: ChartTitle(text: 'Estatísticas Mensais'),
-                  primaryXAxis: CategoryAxis(labelRotation: 60, interval: 1),
-                  tooltipBehavior: TooltipBehavior(enable: true),
-                  series: <CartesianSeries>[
-                    LineSeries<EstatisticaMensal, String>(
-                      dataSource: snapshot.data!,
-                      xValueMapper: (estat, _) => estat.mes,
-                      yValueMapper: (estat, _) => estat.qntdeComidaDesperdicada,
-                      dataLabelSettings: DataLabelSettings(isVisible: true),
-                      markerSettings: MarkerSettings(isVisible: true),
-                    ),
-                  ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              Text(
+                'Estatísticas Gerais',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-              );
-            }
-          },
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: FutureBuilder<List<EstatisticaMensal>>(
+                  future: fetchEstatisticas(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Erro: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text('Nenhuma estatística encontrada.'),
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SfCartesianChart(
+                          title: ChartTitle(
+                            alignment: ChartAlignment.near,
+                            text: 'Estatísticas Mensais',
+                            textStyle: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          primaryXAxis: CategoryAxis(
+                            labelRotation: 60,
+                            interval: 1,
+                          ),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                          series: <CartesianSeries>[
+                            LineSeries<EstatisticaMensal, String>(
+                              dataSource: snapshot.data!,
+                              xValueMapper: (estat, _) => estat.mes,
+                              yValueMapper:
+                                  (estat, _) => estat.qntdeComidaDesperdicada,
+                              dataLabelSettings: DataLabelSettings(
+                                isVisible: true,
+                              ),
+                              markerSettings: MarkerSettings(isVisible: true),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: MediaQuery.of(context).size.height * 0.002,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.55,
+                child: FutureBuilder<List<EstatisticaMensal>>(
+                  future: fetchEstatisticas(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Erro: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text('Nenhuma estatística encontrada.'),
+                      );
+                    } else {
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: SfCircularChart(
+                          title: ChartTitle(
+                            alignment: ChartAlignment.near,
+                            text: 'Estatísticas Mensais',
+                            textStyle: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          legend: Legend(
+                            isVisible: true,
+                            isResponsive: true,
+                            height: '100%',
+                            iconHeight: 12,
+                            iconWidth: 12,
+                            overflowMode: LegendItemOverflowMode.wrap,
+                          ),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                          series: <CircularSeries>[
+                            PieSeries<EstatisticaMensal, String>(
+                              dataSource: snapshot.data!,
+                              xValueMapper: (estat, _) => estat.mes,
+                              yValueMapper:
+                                  (estat, _) => estat.qntdeComidaDesperdicada,
+                              dataLabelSettings: DataLabelSettings(
+                                isVisible: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: MediaQuery.of(context).size.height * 0.002,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: FutureBuilder<List<EstatisticaMensal>>(
+                  future: fetchEstatisticas(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Erro: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text('Nenhuma estatística encontrada.'),
+                      );
+                    } else {
+                      // Extraindo apenas os valores para o SparkBarChart
+                      final dados =
+                          snapshot.data!
+                              .map(
+                                (estat) =>
+                                    estat.qntdeComidaDesperdicada.toDouble(),
+                              )
+                              .toList();
+
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Estatísticas Mensais',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            SfSparkBarChart(
+                              data: dados,
+                              labelDisplayMode: SparkChartLabelDisplayMode.all,
+                              axisLineColor: Colors.grey,
+                              color: Colors.orange,
+                              trackball: SparkChartTrackball(
+                                activationMode: SparkChartActivationMode.tap,
+                              ),
+                              highPointColor: Colors.red,
+                              lowPointColor: Colors.green,
+                              firstPointColor: Colors.blue,
+                              lastPointColor: Colors.purple,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: MediaQuery.of(context).size.height * 0.002,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: FutureBuilder<List<EstatisticaMensal>>(
+                  future: fetchEstatisticas(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Erro: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text('Nenhuma estatística encontrada.'),
+                      );
+                    } else {
+                      final dados =
+                          snapshot.data!
+                              .map(
+                                (estat) =>
+                                    estat.qntdeComidaDesperdicada.toDouble(),
+                              )
+                              .toList();
+
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Tendência de Desperdício de Comida',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 16),
+                            SfSparkAreaChart(
+                              axisLineWidth: 1,
+                              marker: SparkChartMarker(
+                                displayMode: SparkChartMarkerDisplayMode.all,
+                              ),
+                              data: dados,
+                              labelDisplayMode: SparkChartLabelDisplayMode.all,
+                              axisLineColor: Colors.grey,
+                              color: Theme.of(context).colorScheme.tertiary,
+                              borderColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              borderWidth: 2,
+                              highPointColor: Colors.red,
+                              lowPointColor: Colors.green,
+                              firstPointColor: Colors.blue,
+                              lastPointColor: Colors.purple,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: MediaQuery.of(context).size.height * 0.002,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: FutureBuilder<List<EstatisticaMensal>>(
+                  future: fetchEstatisticas(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Erro: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text('Nenhuma estatística encontrada.'),
+                      );
+                    } else {
+                      final dados = snapshot.data!;
+                      final valores =
+                          dados
+                              .map((e) => e.qntdeComidaDesperdicada.toDouble())
+                              .toList();
+                      final media =
+                          valores.reduce((a, b) => a + b) / valores.length;
+
+                      // Convertendo os dados para +1 (acima da média) e -1 (abaixo da média)
+                      final winLossData =
+                          valores.map((v) => v >= media ? 1 : -1).toList();
+
+                      return Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Comparativo de Desperdício ',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 24),
+                            SfSparkWinLossChart(
+                              data: winLossData,
+                              color: Colors.deepPurple,
+                              negativePointColor: Colors.red,
+                              axisLineColor: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
