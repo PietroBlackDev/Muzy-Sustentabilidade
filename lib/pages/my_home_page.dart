@@ -33,9 +33,9 @@ class _MyHomePageState extends State<MyHomePage> {
     contador();
     tipoRefeicao();
     consultaQuantidadeApi();
-    consultaValorAtual();
     registraTotalHospedes();
     iniciarTimer();
+    consultaValorAtual();
   }
 
   void iniciarTimer() {

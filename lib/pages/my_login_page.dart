@@ -119,6 +119,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
                   ),
                   SizedBox(height: 20),
                   TextFormField(
+                    obscureText: true,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     onChanged: validacao.setSenha,
                     validator: validacaoForm.byField(validacao, 'senha'),

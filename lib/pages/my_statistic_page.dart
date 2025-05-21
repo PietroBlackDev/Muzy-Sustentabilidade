@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:tg/model/estatisticaMensal_model.dart';
 
 class MyStatisticPage extends StatefulWidget {
   const MyStatisticPage({super.key});
@@ -8,12 +12,24 @@ class MyStatisticPage extends StatefulWidget {
 }
 
 class _MyStatisticPageState extends State<MyStatisticPage> {
-  final List<_PieData> pieData = [
-    _PieData('David', 25),
-    _PieData('Steve', 38),
-    _PieData('Jack', 34),
-    _PieData('Others', 52),
-  ];
+  Future<List<EstatisticaMensal>> fetchEstatisticas() async {
+    final response = await http.get(
+      Uri.parse('http://10.125.121.135:8081/CI4/public/api/estatisticas'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonData = json.decode(response.body);
+      return jsonData.map((item) => EstatisticaMensal.fromJson(item)).toList();
+    } else {
+      throw Exception('Falha ao carregar estatísticas');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEstatisticas();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,86 +43,40 @@ class _MyStatisticPageState extends State<MyStatisticPage> {
         ),
         leadingWidth: 160,
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Estatisticas',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-
-              SizedBox(height: 15),
-              Text(
-                'Gráfico de linha',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Center(
-                child: SizedBox(
-                  height: 300,
-                  width: 300,
-                  child: SfCartesianChart(
-                    // Initialize category axis
-                    primaryXAxis: CategoryAxis(),
-
-                    series: <LineSeries<SalesData, String>>[
-                      LineSeries<SalesData, String>(
-                        // Bind data source
-                        dataSource: <SalesData>[
-                          SalesData('Jan', 35),
-                          SalesData('Feb', 28),
-                          SalesData('Mar', 34),
-                          SalesData('Apr', 32),
-                          SalesData('May', 40),
-                        ],
-                        xValueMapper: (SalesData sales, _) => sales.year,
-                        yValueMapper: (SalesData sales, _) => sales.sales,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 15),
-              Text(
-                'Gráfico de linha',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Center(
-                child: SfCircularChart(
-                  title: ChartTitle(text: 'Sales by sales person'),
-                  legend: Legend(isVisible: true),
-                  series: <PieSeries<_PieData, String>>[
-                    PieSeries<_PieData, String>(
-                      explode: true,
-                      explodeIndex: 0,
-                      dataSource: pieData,
-                      xValueMapper: (_PieData data, _) => data.xData,
-                      yValueMapper: (_PieData data, _) => data.yData,
-                      dataLabelMapper: (_PieData data, _) => data.text,
+      body: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 0.4,
+        child: FutureBuilder<List<EstatisticaMensal>>(
+          future: fetchEstatisticas(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Erro: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('Nenhuma estatística encontrada.'));
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SfCartesianChart(
+                  title: ChartTitle(text: 'Estatísticas Mensais'),
+                  primaryXAxis: CategoryAxis(labelRotation: 60, interval: 1),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: <CartesianSeries>[
+                    LineSeries<EstatisticaMensal, String>(
+                      dataSource: snapshot.data!,
+                      xValueMapper: (estat, _) => estat.mes,
+                      yValueMapper: (estat, _) => estat.qntdeComidaDesperdicada,
                       dataLabelSettings: DataLabelSettings(isVisible: true),
+                      markerSettings: MarkerSettings(isVisible: true),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
+              );
+            }
+          },
         ),
       ),
     );
   }
-}
-
-class SalesData {
-  SalesData(this.year, this.sales);
-  final String year;
-  final double sales;
-}
-
-class _PieData {
-  _PieData(this.xData, this.yData);
-  final String xData;
-  final num yData;
-  String? text;
 }
