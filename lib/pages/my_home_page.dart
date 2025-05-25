@@ -39,13 +39,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void iniciarTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       contador();
       tipoRefeicao();
     });
 
     _timer = Timer.periodic(const Duration(seconds: 600), (timer) {
       tipoRefeicao();
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      registraTotalHospedes();
+      consultaValorAtual();
     });
   }
 
