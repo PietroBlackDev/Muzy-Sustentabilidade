@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 InputDecoration getAuthenticationInputDecoration(String label) {
   return InputDecoration(
     hintText: label,
+    hintStyle: TextStyle(color: Colors.black45),
     filled: true,
     fillColor: Colors.white,
     contentPadding: const EdgeInsets.fromLTRB(13, 7, 13, 7),

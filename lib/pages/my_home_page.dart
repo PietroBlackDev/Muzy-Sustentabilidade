@@ -48,8 +48,12 @@ class _MyHomePageState extends State<MyHomePage> {
       tipoRefeicao();
     });
 
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
       registraTotalHospedes();
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      consultaQuantidadeApi();
       consultaValorAtual();
     });
   }

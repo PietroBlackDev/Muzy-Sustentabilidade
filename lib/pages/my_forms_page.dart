@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tg/componentes/decoracao_campo_aut.dart';
+
+Timer? _timer;
+String refeicao = '';
 
 class MyFormsPage extends StatefulWidget {
   const MyFormsPage({super.key});
@@ -12,6 +17,56 @@ class MyFormsPage extends StatefulWidget {
 }
 
 class _MyFormsPageState extends State<MyFormsPage> {
+  @override
+  void initState() {
+    super.initState();
+    tipoRefeicao();
+    iniciarTimer();
+  }
+
+  void iniciarTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 600), (timer) {
+      tipoRefeicao();
+    });
+  }
+
+  void tipoRefeicao() {
+    setState(() {
+      TimeOfDay horarioCafe = TimeOfDay(hour: 10, minute: 00);
+      TimeOfDay horarioAlmoco = TimeOfDay(hour: 15, minute: 00);
+      TimeOfDay horarioTarde = TimeOfDay(hour: 18, minute: 0);
+      TimeOfDay horarioJanta = TimeOfDay(hour: 22, minute: 0);
+      TimeOfDay horarioAtual = TimeOfDay.now();
+
+      int comparacaoAlmoco = compareTimes(horarioAtual, horarioAlmoco);
+      int comparacaoJanta = compareTimes(horarioAtual, horarioJanta);
+      int comparacaoCafe = compareTimes(horarioAtual, horarioCafe);
+      int comparacaoTarde = compareTimes(horarioAtual, horarioTarde);
+
+      if (comparacaoCafe < 0) {
+        refeicao = 'Café da Manhã';
+      } else if (comparacaoAlmoco < 0) {
+        refeicao = 'Almoço';
+      } else if (comparacaoTarde < 0) {
+        refeicao = 'Café da Tarde';
+      } else if (comparacaoJanta < 0) {
+        refeicao = 'Jantar';
+      }
+    });
+  }
+
+  int compareTimes(TimeOfDay t0, TimeOfDay t1) {
+    final int minutosAtual = t0.hour * 60 + t0.minute;
+    final int minutos1 = t1.hour * 60 + t1.minute;
+    return minutosAtual.compareTo(minutos1);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   String dataAgora = DateFormat.yMMMd().format(DateTime.now());
 
   var formKey = GlobalKey<FormState>();
@@ -173,7 +228,7 @@ class _MyFormsPageState extends State<MyFormsPage> {
                     },
                     controller: inputComidaDesperdicada,
                     decoration: getAuthenticationInputDecoration(
-                      'Refeição atual',
+                      'Pesagem da refeição atual ($refeicao)',
                     ),
                   ),
                   SizedBox(height: 60),
