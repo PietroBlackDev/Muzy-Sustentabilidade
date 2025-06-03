@@ -31,6 +31,13 @@ class _MyHomePageState extends State<MyHomePage> {
   String refeicao = '';
   int? valor = total! - quantidade!;
 
+  Future<void> _handleRefresh() async {
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      registraTotalHospedes();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
       contador();
     });
 
-    _timerTipoRefeicao = Timer.periodic(const Duration(seconds: 600), (timer) {
+    _timerTipoRefeicao = Timer.periodic(const Duration(seconds: 5), (timer) {
       tipoRefeicao();
     });
 
@@ -62,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       consultaValorAtual();
     });
 
-    _timerRegistraTotal = Timer.periodic(const Duration(seconds: 300), (timer) {
+    _timerRegistraTotal = Timer.periodic(const Duration(seconds: 600), (timer) {
       registraTotalHospedes();
     });
   }
@@ -244,361 +251,386 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    "Painel",
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.77,
+            alignment: Alignment.center,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          "Painel",
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 20, bottom: 10),
-                  child: Text(
-                    horario,
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          left: 20,
+                          bottom: 10,
+                        ),
+                        child: Text(
+                          horario,
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
 
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 10,
-                    right: 20,
-                    bottom: 10,
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          right: 20,
+                          bottom: 10,
+                        ),
+                        child: Text(
+                          refeicao,
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    refeicao,
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.68,
-                  height: MediaQuery.of(context).size.height * 0.325,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(130),
-                  ),
-                  child: Column(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      valorAtual != null
-                          ? Text(
-                            '$valorAtual',
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 115,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                          : SizedBox(
-                            height: 100,
-                            width: 100,
-                            child: CircularProgressIndicator(strokeWidth: 10),
-                          ),
-                      SizedBox(height: 10),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.68,
+                        height: MediaQuery.of(context).size.height * 0.325,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(130),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            valorAtual != null
+                                ? Text(
+                                  '$valorAtual',
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 115,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                                : SizedBox(
+                                  height: 100,
+                                  width: 100,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 10,
+                                  ),
+                                ),
+                            SizedBox(height: 10),
 
-                      Column(
+                            Column(
+                              children: [
+                                Text(
+                                  "Hospedes para",
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  refeicao,
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.04,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.275,
+                              height: MediaQuery.of(context).size.height * 0.13,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (quantidade == null) {
+                                    _isButtonDisabled = true;
+                                  } else {
+                                    _isButtonDisabled = false;
+                                    quantidade = 1;
+                                    ultimaInsercao = 1;
+                                    atualizaValorHospedes(quantidade!);
+                                    setState(() {
+                                      valorAtual = valorAtual! - 1;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  "-1",
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.275,
+                              height: MediaQuery.of(context).size.height * 0.13,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (quantidade == null) {
+                                    _isButtonDisabled = true;
+                                  } else {
+                                    _isButtonDisabled = false;
+                                    quantidade = 2;
+                                    ultimaInsercao = 2;
+                                    atualizaValorHospedes(quantidade!);
+                                    setState(() {
+                                      valorAtual = valorAtual! - 2;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  "-2",
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.275,
+                              height: MediaQuery.of(context).size.height * 0.13,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(0),
+                              ),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (quantidade == null) {
+                                    _isButtonDisabled = true;
+                                  } else {
+                                    _isButtonDisabled = false;
+                                    quantidade = 3;
+                                    ultimaInsercao = 3;
+                                    atualizaValorHospedes(quantidade!);
+                                    setState(() {
+                                      valorAtual = valorAtual! - 3;
+                                    });
+                                  }
+                                },
+                                child: Text(
+                                  "-3",
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            "Hospedes para",
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.275,
+                            height: MediaQuery.of(context).size.height * 0.13,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              onPressed: () {
+                                if (quantidade == null) {
+                                  _isButtonDisabled = true;
+                                } else {
+                                  _isButtonDisabled = false;
+                                  quantidade = 4;
+                                  ultimaInsercao = 4;
+                                  atualizaValorHospedes(quantidade!);
+                                  setState(() {
+                                    valorAtual = valorAtual! - 4;
+                                  });
+                                }
+                              },
+                              child: Text(
+                                "-4",
+                                style: TextStyle(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
-                          Text(
-                            refeicao,
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.037,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.275,
+                            height: MediaQuery.of(context).size.height * 0.13,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              onPressed: () {
+                                if (quantidade == null) {
+                                  _isButtonDisabled = true;
+                                } else {
+                                  _isButtonDisabled = false;
+                                  quantidade = 5;
+                                  ultimaInsercao = 5;
+                                  atualizaValorHospedes(quantidade!);
+                                  setState(() {
+                                    valorAtual = valorAtual! - 5;
+                                  });
+                                }
+                              },
+                              child: Text(
+                                "-5",
+                                style: TextStyle(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.037,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.275,
+                            height: MediaQuery.of(context).size.height * 0.13,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.tertiary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              onPressed:
+                                  _isButtonDisabled
+                                      ? null
+                                      : () {
+                                        _isButtonDisabled = true;
+                                        quantidade = -ultimaInsercao;
+                                        atualizaValorHospedes(quantidade!);
+                                        setState(() {
+                                          valorAtual =
+                                              valorAtual! + ultimaInsercao;
+                                        });
+                                      },
+                              child: Icon(
+                                Icons.keyboard_backspace_outlined,
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                                size: 30,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.275,
-                        height: MediaQuery.of(context).size.height * 0.13,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: () {
-                            if (quantidade == null) {
-                              _isButtonDisabled = true;
-                            } else {
-                              _isButtonDisabled = false;
-                              quantidade = 1;
-                              ultimaInsercao = 1;
-                              atualizaValorHospedes(quantidade!);
-                              setState(() {
-                                valorAtual = valorAtual! - 1;
-                              });
-                            }
-                          },
-                          child: Text(
-                            "-1",
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.275,
-                        height: MediaQuery.of(context).size.height * 0.13,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: () {
-                            if (quantidade == null) {
-                              _isButtonDisabled = true;
-                            } else {
-                              _isButtonDisabled = false;
-                              quantidade = 2;
-                              ultimaInsercao = 2;
-                              atualizaValorHospedes(quantidade!);
-                              setState(() {
-                                valorAtual = valorAtual! - 2;
-                              });
-                            }
-                          },
-                          child: Text(
-                            "-2",
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.275,
-                        height: MediaQuery.of(context).size.height * 0.13,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: () {
-                            if (quantidade == null) {
-                              _isButtonDisabled = true;
-                            } else {
-                              _isButtonDisabled = false;
-                              quantidade = 3;
-                              ultimaInsercao = 3;
-                              atualizaValorHospedes(quantidade!);
-                              setState(() {
-                                valorAtual = valorAtual! - 3;
-                              });
-                            }
-                          },
-                          child: Text(
-                            "-3",
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.275,
-                      height: MediaQuery.of(context).size.height * 0.13,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        onPressed: () {
-                          if (quantidade == null) {
-                            _isButtonDisabled = true;
-                          } else {
-                            _isButtonDisabled = false;
-                            quantidade = 4;
-                            ultimaInsercao = 4;
-                            atualizaValorHospedes(quantidade!);
-                            setState(() {
-                              valorAtual = valorAtual! - 4;
-                            });
-                          }
-                        },
-                        child: Text(
-                          "-4",
-                          style: TextStyle(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.037),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.275,
-                      height: MediaQuery.of(context).size.height * 0.13,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        onPressed: () {
-                          if (quantidade == null) {
-                            _isButtonDisabled = true;
-                          } else {
-                            _isButtonDisabled = false;
-                            quantidade = 5;
-                            ultimaInsercao = 5;
-                            atualizaValorHospedes(quantidade!);
-                            setState(() {
-                              valorAtual = valorAtual! - 5;
-                            });
-                          }
-                        },
-                        child: Text(
-                          "-5",
-                          style: TextStyle(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 30,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.037),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.275,
-                      height: MediaQuery.of(context).size.height * 0.13,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.tertiary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        onPressed:
-                            _isButtonDisabled
-                                ? null
-                                : () {
-                                  _isButtonDisabled = true;
-                                  quantidade = -ultimaInsercao;
-                                  atualizaValorHospedes(quantidade!);
-                                  setState(() {
-                                    valorAtual = valorAtual! + ultimaInsercao;
-                                  });
-                                },
-                        child: Icon(
-                          Icons.keyboard_backspace_outlined,
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          size: 30,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );
