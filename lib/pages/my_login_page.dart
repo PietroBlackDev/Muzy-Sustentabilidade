@@ -16,6 +16,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
   final validacao = CredenciaisModel();
   final validacaoForm = CredentialsValidator();
   final formKey = GlobalKey<FormState>();
+  String user = '';
 
   bool isValid() {
     final result = validacaoForm.validate(validacao);
@@ -146,12 +147,37 @@ class _MyLoginPageState extends State<MyLoginPage> {
                           onPressed:
                               isValid()
                                   ? () {
-                                    if (validacao.senha == 'admin' &&
-                                        validacao.usuario == 'admin') {
+                                    if (validacao.senha == 'hvr2015' &&
+                                            validacao.usuario == 'gestor' ||
+                                        validacao.senha == '00000' &&
+                                            validacao.usuario == 'painel' ||
+                                        validacao.senha == 'rossa2025' &&
+                                            validacao.usuario ==
+                                                'nutricionista') {
+                                      if (validacao.senha == 'rossa2025' &&
+                                          validacao.usuario ==
+                                              'nutricionista') {
+                                        user = validacao.usuario!;
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => HomeScreen(
+                                                  usuario: user,
+                                                  indice: 1,
+                                                ),
+                                          ),
+                                        );
+                                      }
+                                      user = validacao.usuario!;
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => HomeScreen(),
+                                          builder:
+                                              (context) => HomeScreen(
+                                                usuario: user,
+                                                indice: 0,
+                                              ),
                                         ),
                                       );
                                     } else {
