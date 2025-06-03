@@ -12,7 +12,11 @@ int valorHospedes = 0;
 int? quantidade = 0;
 int? total = 0;
 int? valorAtual;
-Timer? _timer;
+Timer? _timerContador;
+Timer? _timerTipoRefeicao;
+Timer? _timerConsultaQuantidade;
+Timer? _timerConsultaValor;
+Timer? _timerRegistraTotal;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -32,35 +36,42 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     contador();
     tipoRefeicao();
-    consultaQuantidadeApi();
-    registraTotalHospedes();
     iniciarTimer();
+    _timerTipoRefeicao;
+    _timerRegistraTotal;
     consultaValorAtual();
+    registraTotalHospedes();
   }
 
   void iniciarTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timerContador = Timer.periodic(const Duration(seconds: 1), (timer) {
       contador();
+    });
+
+    _timerTipoRefeicao = Timer.periodic(const Duration(seconds: 600), (timer) {
       tipoRefeicao();
     });
 
-    _timer = Timer.periodic(const Duration(seconds: 600), (timer) {
-      tipoRefeicao();
+    _timerConsultaQuantidade = Timer.periodic(const Duration(seconds: 3), (
+      timer,
+    ) {
+      consultaQuantidadeTotal();
     });
 
-    _timer = Timer.periodic(const Duration(seconds: 15), (timer) {
-      registraTotalHospedes();
-    });
-
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      consultaQuantidadeApi();
+    _timerConsultaValor = Timer.periodic(const Duration(seconds: 2), (timer) {
       consultaValorAtual();
+    });
+
+    _timerRegistraTotal = Timer.periodic(const Duration(seconds: 300), (timer) {
+      registraTotalHospedes();
     });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _timerContador?.cancel();
+    _timerConsultaQuantidade?.cancel();
+    _timerConsultaValor?.cancel();
     super.dispose();
   }
 
@@ -107,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return minutosAtual.compareTo(minutos1);
   }
 
-  Future consultaQuantidadeApi() async {
+  Future consultaQuantidadeTotal() async {
     try {
       Dio dio = Dio();
       Response response = await dio.get(
@@ -128,6 +139,8 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           total = quantidadeModel.quantidade;
         });
+
+        print(total);
       }
     } catch (e) {
       print("Erro ao consultar a API: $e");
@@ -153,6 +166,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // Atualizar o estado do widget com o valor obtido
 
         valorAtual = valorAtualModel.valor;
+
+        print(valorAtual);
       }
     } catch (e) {
       print("Erro ao consultar a API: $e");
@@ -196,7 +211,6 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Inserção realizada com sucesso!');
       } else {
         print('Erro ao inserir: ${response.statusCode}');
       }
