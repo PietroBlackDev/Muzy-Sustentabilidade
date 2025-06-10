@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 import 'package:tg/model/estatisticaMensal_model.dart';
+import 'package:tg/pages/my_statistic_page_dois.dart';
 
 class MyStatisticPage extends StatefulWidget {
   const MyStatisticPage({super.key});
@@ -57,57 +57,113 @@ class _MyStatisticPageState extends State<MyStatisticPage> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.4,
-                child: FutureBuilder<List<EstatisticaMensal>>(
-                  future: fetchEstatisticas(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Erro: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
-                        child: Text('Nenhuma estatística encontrada.'),
-                      );
-                    } else {
-                      return Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: SfCartesianChart(
-                          title: ChartTitle(
-                            alignment: ChartAlignment.near,
-                            text: 'Estatísticas Mensais',
-                            textStyle: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          primaryXAxis: CategoryAxis(
-                            labelRotation: 60,
-                            interval: 1,
-                          ),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          series: <CartesianSeries>[
-                            LineSeries<EstatisticaMensal, String>(
-                              dataSource: snapshot.data!,
-                              xValueMapper: (estat, _) => estat.mes,
-                              yValueMapper:
-                                  (estat, _) => estat.qntdeComidaDesperdicada,
-                              dataLabelSettings: DataLabelSettings(
-                                isVisible: true,
-                              ),
-                              markerSettings: MarkerSettings(isVisible: true),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+              Material(
+                color: Colors.transparent, // Necessário para o efeito ripple
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  splashColor: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withOpacity(0.0),
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => MyStatisticPageDois(),
+                        transitionsBuilder: (_, animation, __, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
                   },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.4519,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Theme.of(context).cardColor,
+                    ),
+                    child: FutureBuilder<List<EstatisticaMensal>>(
+                      future: fetchEstatisticas(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Erro: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Center(
+                            child: Text('Nenhuma estatística encontrada.'),
+                          );
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 10,
+                                    left: 10,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Estatisticas de desperdício por periodos',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_ios_rounded,
+                                        size: 21,
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SfCartesianChart(
+                                  primaryXAxis: CategoryAxis(
+                                    labelRotation: 60,
+                                    interval: 1,
+                                  ),
+
+                                  series: <CartesianSeries>[
+                                    LineSeries<EstatisticaMensal, String>(
+                                      dataSource: snapshot.data!,
+                                      xValueMapper: (estat, _) => estat.mes,
+                                      yValueMapper:
+                                          (estat, _) =>
+                                              estat.qntdeComidaDesperdicada,
+                                      dataLabelSettings: DataLabelSettings(
+                                        isVisible: true,
+                                      ),
+                                      markerSettings: MarkerSettings(
+                                        isVisible: true,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
                 ),
               ),
-
               Container(
                 width: MediaQuery.of(context).size.width * 0.85,
                 height: MediaQuery.of(context).size.height * 0.002,
@@ -119,7 +175,7 @@ class _MyStatisticPageState extends State<MyStatisticPage> {
 
               SizedBox(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.55,
+                height: MediaQuery.of(context).size.height * 0.4519,
                 child: FutureBuilder<List<EstatisticaMensal>>(
                   future: fetchEstatisticas(),
                   builder: (context, snapshot) {
@@ -134,34 +190,56 @@ class _MyStatisticPageState extends State<MyStatisticPage> {
                     } else {
                       return Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: SfCircularChart(
-                          title: ChartTitle(
-                            alignment: ChartAlignment.near,
-                            text: 'Estatísticas Mensais',
-                            textStyle: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          legend: Legend(
-                            isVisible: true,
-                            isResponsive: true,
-                            height: '100%',
-                            iconHeight: 12,
-                            iconWidth: 12,
-                            overflowMode: LegendItemOverflowMode.wrap,
-                          ),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          series: <CircularSeries>[
-                            PieSeries<EstatisticaMensal, String>(
-                              dataSource: snapshot.data!,
-                              xValueMapper: (estat, _) => estat.mes,
-                              yValueMapper:
-                                  (estat, _) => estat.qntdeComidaDesperdicada,
-                              dataLabelSettings: DataLabelSettings(
-                                isVisible: true,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 10,
+                                left: 10,
                               ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Estatisticas de desperdício por refeições',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 21,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SfCircularChart(
+                              legend: Legend(
+                                isVisible: true,
+                                isResponsive: true,
+                                height: '100%',
+                                iconHeight: 12,
+                                iconWidth: 12,
+                                overflowMode: LegendItemOverflowMode.wrap,
+                              ),
+                              tooltipBehavior: TooltipBehavior(enable: true),
+                              series: <CircularSeries>[
+                                PieSeries<EstatisticaMensal, String>(
+                                  dataSource: snapshot.data!,
+                                  xValueMapper: (estat, _) => estat.mes,
+                                  yValueMapper:
+                                      (estat, _) =>
+                                          estat.qntdeComidaDesperdicada,
+                                  dataLabelSettings: DataLabelSettings(
+                                    isVisible: true,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -209,11 +287,30 @@ class _MyStatisticPageState extends State<MyStatisticPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Estatísticas Mensais',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 10,
+                                left: 0,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Estatisticas de desperdício por hospedes',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 21,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ],
                               ),
                             ),
                             SizedBox(height: 16),
