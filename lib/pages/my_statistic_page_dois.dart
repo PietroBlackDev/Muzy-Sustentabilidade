@@ -82,8 +82,9 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
       body: SingleChildScrollView(
         child: Center(
           child: Column(
+            spacing: 20,
             children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              SizedBox(height: 1),
               Text(
                 'Estatisticas de desperdício por periodos',
                 style: TextStyle(
@@ -93,11 +94,19 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                 ),
               ),
               Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.4519,
+                padding: EdgeInsets.only(top: 10, bottom: 5, left: 5, right: 5),
+                width: MediaQuery.of(context).size.width * 0.94,
+                height: MediaQuery.of(context).size.height * 0.4313,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Theme.of(context).cardColor,
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.tertiary,
+                      blurRadius: 5,
+                      spreadRadius: 1,
+                    ),
+                  ],
                 ),
                 child: FutureBuilder<List<EstatisticaMensal>>(
                   future: fetchEstatisticas(),
@@ -112,7 +121,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                       );
                     } else {
                       return Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(0),
                         child: Column(
                           children: [
                             Row(
@@ -157,18 +166,21 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                   },
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: MediaQuery.of(context).size.height * 0.002,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
 
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.4519,
+              Container(
+                width: MediaQuery.of(context).size.width * 0.94,
+                height: MediaQuery.of(context).size.height * 0.43,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.tertiary,
+                      blurRadius: 5,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
                 child: FutureBuilder<List<EstatisticaMediaRefeicao>>(
                   future: fetchEstatisticaMediaRefeicao(),
                   builder: (context, snapshot) {
@@ -185,8 +197,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                         padding: const EdgeInsets.only(
                           right: 5,
                           left: 5,
-                          top: 16,
-                          bottom: 16,
+                          top: 10,
                         ),
                         child: Column(
                           children: [
@@ -234,17 +245,19 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
               ),
 
               Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: MediaQuery.of(context).size.height * 0.002,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
+                width: MediaQuery.of(context).size.width * 0.94,
                 height: MediaQuery.of(context).size.height * 0.4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.tertiary,
+                      blurRadius: 5,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
                 child: FutureBuilder<List<EstatisticaSemanalDesperdicio>>(
                   future: fetchEstatisticasSemanalDesperdicio(),
                   builder: (context, snapshot) {
@@ -345,15 +358,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                   },
                 ),
               ),
-
-              Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: MediaQuery.of(context).size.height * 0.002,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              SizedBox(height: 1),
             ],
           ),
         ),
