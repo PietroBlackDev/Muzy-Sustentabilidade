@@ -5,6 +5,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:tg/model/estatisticaMediaRefeicao_model.dart';
 import 'package:tg/model/estatisticaMensal_model.dart';
 import 'package:tg/model/estatisticaSemanalDesperdicio_model.dart';
+import 'package:tg/model/estatisticaTotalDesperdicioMes.dart';
 
 class MyStatisticPageDois extends StatefulWidget {
   const MyStatisticPageDois({super.key});
@@ -61,6 +62,24 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
     }
   }
 
+  Future<List<EstatisticaTotalDesperdicioMes>>
+  fetchEstatisticasTotalDesperdicioMes() async {
+    final response = await http.get(
+      Uri.parse(
+        'http://10.125.121.135:8081/CI4/public/api/estatisticas/totalDesperdicioMes',
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonData = json.decode(response.body);
+      return jsonData
+          .map((item) => EstatisticaTotalDesperdicioMes.fromJson(item))
+          .toList();
+    } else {
+      throw Exception('Falha ao carregar estatísticas');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -93,6 +112,110 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.all(12),
+                width: MediaQuery.of(context).size.width * 0.94,
+                height: MediaQuery.of(context).size.height * 0.45,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.tertiary,
+                      blurRadius: 5,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: FutureBuilder<List<EstatisticaTotalDesperdicioMes>>(
+                  future: fetchEstatisticasTotalDesperdicioMes(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Erro: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                        child: Text('Nenhuma estatística encontrada.'),
+                      );
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Total de desperdicio de comida por mês',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: SfCartesianChart(
+                              backgroundColor: Colors.transparent,
+                              primaryXAxis: CategoryAxis(
+                                labelRotation: 60,
+                                interval: 1,
+                                majorGridLines: const MajorGridLines(width: 1),
+                                labelStyle: const TextStyle(fontSize: 11),
+                              ),
+                              primaryYAxis: NumericAxis(
+                                axisLine: const AxisLine(width: 0),
+                                majorTickLines: const MajorTickLines(size: 0),
+                                labelStyle: const TextStyle(fontSize: 11),
+                              ),
+                              tooltipBehavior: TooltipBehavior(enable: true),
+                              legend: Legend(
+                                isVisible: true,
+                                position: LegendPosition.bottom,
+                                textStyle: const TextStyle(fontSize: 12),
+                              ),
+                              series: <CartesianSeries>[
+                                LineSeries<
+                                  EstatisticaTotalDesperdicioMes,
+                                  String
+                                >(
+                                  name: 'Desperdício (kg)',
+                                  dataSource: snapshot.data!,
+                                  xValueMapper: (estat, _) => estat.mes,
+                                  yValueMapper:
+                                      (estat, _) =>
+                                          estat.qntdeComidaDesperdicada,
+                                  dataLabelSettings: const DataLabelSettings(
+                                    labelAlignment: ChartDataLabelAlignment.top,
+                                    isVisible: true,
+                                    textStyle: TextStyle(fontSize: 8),
+                                  ),
+                                  markerSettings: const MarkerSettings(
+                                    isVisible: true,
+                                    width: 6,
+                                    height: 6,
+                                    shape: DataMarkerType.circle,
+                                    borderColor: Colors.deepOrange,
+                                    borderWidth: 2,
+                                  ),
+                                  color: Colors.deepOrange,
+                                  width: 3,
+                                  enableTooltip: true,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ),
+
               Container(
                 padding: EdgeInsets.only(top: 10, bottom: 5, left: 5, right: 5),
                 width: MediaQuery.of(context).size.width * 0.94,
@@ -129,7 +252,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Média de desperdicio de comida por mês',
+                                  'Média diária de desperdicio de comida por mês',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -205,7 +328,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Média de desperdício por tipo de refeição',
+                                  'Média diária de desperdício por tipo de refeição',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -311,7 +434,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Média de desperdício por dia da semana',
+                                  'Média diária de desperdício por dia da semana',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
