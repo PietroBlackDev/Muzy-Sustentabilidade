@@ -2,26 +2,31 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:tg/model/model_estatisticas_desperdicio/estatisticaMediaRefeicao_model.dart';
-import 'package:tg/model/model_estatisticas_desperdicio/estatisticaMensal_model.dart';
+import 'package:tg/model/model_estatisticas_consumo/estatisticaMediaConsumidaRefeicao_model.dart';
+import 'package:tg/model/model_estatisticas_consumo/estatisticaMediaMensalConsumida_model.dart';
+import 'package:tg/model/model_estatisticas_consumo/estatisticaTotalConsumidaMes_model.dart';
 import 'package:tg/model/model_estatisticas_desperdicio/estatisticaSemanalDesperdicio_model.dart';
-import 'package:tg/model/model_estatisticas_desperdicio/estatisticaTotalDesperdicioMes.dart';
 
-class MyStatisticPageDois extends StatefulWidget {
-  const MyStatisticPageDois({super.key});
+class MyStatisticPageTres extends StatefulWidget {
+  const MyStatisticPageTres({super.key});
   @override
-  State<MyStatisticPageDois> createState() => _MyStatisticPageDoisState();
+  State<MyStatisticPageTres> createState() => _MyStatisticPageTresState();
 }
 
-class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
-  Future<List<EstatisticaMensal>> fetchEstatisticas() async {
+class _MyStatisticPageTresState extends State<MyStatisticPageTres> {
+  Future<List<EstatisticaMensalConsumida>>
+  fetchEstatisticaMensalConsumida() async {
     final response = await http.get(
-      Uri.parse('http://10.125.121.135:8081/CI4/public/api/estatisticas'),
+      Uri.parse(
+        'http://10.125.121.135:8081/CI4/public/api/estatisticas/mediaMensalConsumida',
+      ),
     );
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
-      return jsonData.map((item) => EstatisticaMensal.fromJson(item)).toList();
+      return jsonData
+          .map((item) => EstatisticaMensalConsumida.fromJson(item))
+          .toList();
     } else {
       throw Exception('Falha ao carregar estatísticas');
     }
@@ -45,35 +50,36 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
     }
   }
 
-  Future<List<EstatisticaMediaRefeicao>> fetchEstatisticaMediaRefeicao() async {
+  Future<List<EstatisticaMediaConsumidaRefeicao>>
+  fetchEstatisticaMediaConsumidaRefeicao() async {
     final response = await http.get(
       Uri.parse(
-        'http://10.125.121.135:8081/CI4/public/api/estatisticas/mediaDesperdicioRefeicao',
+        'http://10.125.121.135:8081/CI4/public/api/estatisticas/mediaConsumidaRefeicao',
       ),
     );
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
       return jsonData
-          .map((item) => EstatisticaMediaRefeicao.fromJson(item))
+          .map((item) => EstatisticaMediaConsumidaRefeicao.fromJson(item))
           .toList();
     } else {
       throw Exception('Falha ao carregar estatísticas');
     }
   }
 
-  Future<List<EstatisticaTotalDesperdicioMes>>
-  fetchEstatisticasTotalDesperdicioMes() async {
+  Future<List<EstatisticaTotalConsumidaMes>>
+  fetchEstatisticaTotalConsumidaMes() async {
     final response = await http.get(
       Uri.parse(
-        'http://10.125.121.135:8081/CI4/public/api/estatisticas/totalDesperdicioMes',
+        'http://10.125.121.135:8081/CI4/public/api/estatisticas/totalConsumidaMes',
       ),
     );
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = json.decode(response.body);
       return jsonData
-          .map((item) => EstatisticaTotalDesperdicioMes.fromJson(item))
+          .map((item) => EstatisticaTotalConsumidaMes.fromJson(item))
           .toList();
     } else {
       throw Exception('Falha ao carregar estatísticas');
@@ -83,7 +89,6 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
   @override
   void initState() {
     super.initState();
-    fetchEstatisticas();
   }
 
   @override
@@ -105,7 +110,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
             children: [
               SizedBox(height: 1),
               Text(
-                'Estatisticas de desperdício por periodos',
+                'Estatísticas de consumo por periodos',
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
@@ -127,8 +132,8 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                     ),
                   ],
                 ),
-                child: FutureBuilder<List<EstatisticaTotalDesperdicioMes>>(
-                  future: fetchEstatisticasTotalDesperdicioMes(),
+                child: FutureBuilder<List<EstatisticaTotalConsumidaMes>>(
+                  future: fetchEstatisticaTotalConsumidaMes(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -149,7 +154,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Total de desperdicio de comida por mês',
+                                  'Total de comida consumida por mês',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -180,15 +185,15 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               ),
                               series: <CartesianSeries>[
                                 LineSeries<
-                                  EstatisticaTotalDesperdicioMes,
+                                  EstatisticaTotalConsumidaMes,
                                   String
                                 >(
-                                  name: 'Desperdício (kg)',
+                                  name: 'Comida consumida (kg)',
                                   dataSource: snapshot.data!,
-                                  xValueMapper: (estat, _) => estat.mes,
+                                  xValueMapper:
+                                      (estat, _) => estat.mesAbreviado,
                                   yValueMapper:
-                                      (estat, _) =>
-                                          estat.qntdeComidaDesperdicada,
+                                      (estat, _) => estat.totalConsumido,
                                   dataLabelSettings: const DataLabelSettings(
                                     labelAlignment: ChartDataLabelAlignment.top,
                                     isVisible: true,
@@ -231,8 +236,8 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                     ),
                   ],
                 ),
-                child: FutureBuilder<List<EstatisticaMensal>>(
-                  future: fetchEstatisticas(),
+                child: FutureBuilder<List<EstatisticaMensalConsumida>>(
+                  future: fetchEstatisticaMensalConsumida(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
@@ -252,7 +257,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Média diária de desperdicio de comida por mês',
+                                  'Média diária de consumo de comida por mês',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -264,17 +269,23 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               primaryXAxis: CategoryAxis(
                                 labelRotation: 60,
                                 interval: 1,
+                                labelStyle: const TextStyle(fontSize: 11),
                               ),
 
                               series: <CartesianSeries>[
-                                LineSeries<EstatisticaMensal, String>(
+                                LineSeries<EstatisticaMensalConsumida, String>(
                                   dataSource: snapshot.data!,
-                                  xValueMapper: (estat, _) => estat.mes,
+                                  xValueMapper:
+                                      (estat, _) => estat.mesAbreviado,
                                   yValueMapper:
-                                      (estat, _) =>
-                                          estat.qntdeComidaDesperdicada,
+                                      (estat, _) => estat.qntdeComidaConsumida,
+                                  dataLabelMapper:
+                                      (estat, _) => estat.qntdeComidaConsumida
+                                          .toStringAsFixed(0),
                                   dataLabelSettings: DataLabelSettings(
+                                    labelAlignment: ChartDataLabelAlignment.top,
                                     isVisible: true,
+                                    textStyle: TextStyle(fontSize: 8),
                                   ),
                                   markerSettings: MarkerSettings(
                                     isVisible: true,
@@ -304,8 +315,8 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                     ),
                   ],
                 ),
-                child: FutureBuilder<List<EstatisticaMediaRefeicao>>(
-                  future: fetchEstatisticaMediaRefeicao(),
+                child: FutureBuilder<List<EstatisticaMediaConsumidaRefeicao>>(
+                  future: fetchEstatisticaMediaConsumidaRefeicao(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
@@ -328,7 +339,7 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Média diária de desperdício por tipo de refeição',
+                                  'Média diária de consumo por tipo de refeição',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
@@ -347,12 +358,15 @@ class _MyStatisticPageDoisState extends State<MyStatisticPageDois> {
                               ),
                               tooltipBehavior: TooltipBehavior(enable: true),
                               series: <CircularSeries>[
-                                PieSeries<EstatisticaMediaRefeicao, String>(
+                                PieSeries<
+                                  EstatisticaMediaConsumidaRefeicao,
+                                  String
+                                >(
                                   dataSource: snapshot.data!,
                                   xValueMapper:
                                       (estat, _) => estat.tipoRefeicao,
                                   yValueMapper:
-                                      (estat, _) => estat.mediaDesperdicio,
+                                      (estat, _) => estat.mediaConsumida,
                                   dataLabelSettings: DataLabelSettings(
                                     isVisible: true,
                                   ),
