@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart';
+import 'package:tg/componentes/loading.dart';
 import 'dart:convert';
 import 'package:tg/model/quantidade_model.dart';
 import 'package:tg/model/valorAtual_model.dart';
@@ -17,6 +18,8 @@ Timer? _timerTipoRefeicao;
 Timer? _timerConsultaQuantidade;
 Timer? _timerConsultaValor;
 Timer? _timerRegistraTotal;
+
+bool _timersIniciados = false;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -41,37 +44,73 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    contador();
-    tipoRefeicao();
-    iniciarTimer();
-    _timerTipoRefeicao;
-    _timerRegistraTotal;
-    consultaValorAtual();
-    registraTotalHospedes();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      contador();
+      tipoRefeicao();
+      iniciarTimer();
+      _timerTipoRefeicao;
+      _timerRegistraTotal;
+      consultaQuantidadeTotal();
+      consultaValorAtual();
+      registraTotalHospedes();
+    });
   }
 
   void iniciarTimer() {
+    if (_timersIniciados) {
+      debugPrint('[Timers] Já iniciados — ignorando novo start');
+      return;
+    }
+    _timersIniciados = true;
+
+    // Sempre cancele antes de criar (defensivo, evita duplicidade)
+    _cancelarTimers();
+
     _timerContador = Timer.periodic(const Duration(seconds: 1), (timer) {
       contador();
     });
+    debugPrint('Contador iniciado: ${_timerContador.hashCode}');
 
     _timerTipoRefeicao = Timer.periodic(const Duration(seconds: 5), (timer) {
       tipoRefeicao();
     });
+    debugPrint('TipoRefeicao iniciado: ${_timerTipoRefeicao.hashCode}');
 
-    _timerConsultaQuantidade = Timer.periodic(const Duration(seconds: 3), (
+    _timerConsultaQuantidade = Timer.periodic(const Duration(seconds: 60), (
       timer,
     ) {
       consultaQuantidadeTotal();
     });
+    debugPrint(
+      'ConsultaQuantidade iniciado: ${_timerConsultaQuantidade.hashCode}',
+    );
 
-    _timerConsultaValor = Timer.periodic(const Duration(seconds: 2), (timer) {
+    _timerConsultaValor = Timer.periodic(const Duration(seconds: 29), (timer) {
       consultaValorAtual();
     });
+    debugPrint('ConsultaValor iniciado: ${_timerConsultaValor.hashCode}');
 
     _timerRegistraTotal = Timer.periodic(const Duration(seconds: 600), (timer) {
       registraTotalHospedes();
     });
+    debugPrint('RegistraTotal iniciado: ${_timerRegistraTotal.hashCode}');
+  }
+
+  void _cancelarTimers() {
+    _timerContador?.cancel();
+    _timerContador = null;
+
+    _timerTipoRefeicao?.cancel();
+    _timerTipoRefeicao = null;
+
+    _timerConsultaQuantidade?.cancel();
+    _timerConsultaQuantidade = null;
+
+    _timerConsultaValor?.cancel();
+    _timerConsultaValor = null;
+
+    _timerRegistraTotal?.cancel();
+    _timerRegistraTotal = null;
   }
 
   @override
@@ -182,6 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> atualizaValorHospedes(int quantidade) async {
+    Loading.show(context, mensagem: 'Aguarde...');
     final Map<String, dynamic> data = {'ValorHospedes': '$quantidade'};
     final String jsonBody = jsonEncode(data);
     print(jsonBody);
@@ -195,12 +235,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         print('Inserção realizada com sucesso!');
+        Loading.hide();
       } else {
         print('Erro ao inserir: ${response.statusCode}');
+        Loading.hide();
       }
     } catch (e) {
       print('Erro na requisição: $e');
+      Loading.hide();
     }
+    Loading.hide();
   }
 
   Future<void> registraTotalHospedes() async {
