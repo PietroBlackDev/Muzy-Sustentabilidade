@@ -38,6 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
     await Future.delayed(Duration(seconds: 2));
     setState(() {
       registraTotalHospedes();
+      consultaQuantidadeTotal();
+      consultaValorAtual();
     });
   }
 
